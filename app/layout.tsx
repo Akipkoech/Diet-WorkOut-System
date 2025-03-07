@@ -6,9 +6,9 @@ import { Inter } from "next/font/google"
 import { usePathname } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/footer"
+import { AuthProvider } from "./contexts/AuthContext"
 
 const inter = Inter({ subsets: ["latin"] })
-
 
 export default function RootLayout({
   children,
@@ -21,11 +21,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex min-h-screen flex-col">
-          {!isDashboard && <Navbar />}
-          <main className="flex-1">{children}</main>
-          {!isDashboard && <Footer />}
-        </div>
+        <AuthProvider>
+          <div className="flex min-h-screen flex-col">
+            {!isDashboard && <Navbar />}
+            <main className="flex-1">{children}</main>
+            {!isDashboard && <Footer />}
+          </div>
+        </AuthProvider>
       </body>
     </html>
   )

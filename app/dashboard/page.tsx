@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Progress } from "@/components/ui/progress"
+import { useAuth } from "@/app/contexts/AuthContext"
 
 // Mock data for charts
 const weightData = [
@@ -22,11 +23,15 @@ export default function Dashboard() {
   const [caloriesProgress] = useState(75)
   const [proteinProgress] = useState(85)
   const [workoutProgress] = useState(60)
+  const { user } = useAuth()
+
+  // Get user's first name
+  const firstName = user?.fullName ? user.fullName.split(' ')[0] : "User"
 
   return (
     <div className="flex-1 space-y-8 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Welcome back, John!</h2>
+        <h2 className="text-3xl font-bold tracking-tight">Welcome back, {firstName}!</h2>
         <div className="flex items-center space-x-2">
           <Button className="bg-red-500 hover:bg-red-600">
             <Plus className="mr-2 h-4 w-4" /> New Workout
@@ -210,4 +215,3 @@ export default function Dashboard() {
     </div>
   )
 }
-

@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { ChevronRight, ChevronLeft, Dumbbell, Scale, Target, Check } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { ChevronRight, ChevronLeft, Dumbbell, Scale, Target, Check, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -15,16 +16,24 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { useAuth } from "../app/contexts/AuthContext"
 
 export function OnboardingDialog() {
   const [step, setStep] = React.useState(1)
   const [open, setOpen] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [errorMessage, setErrorMessage] = React.useState("")
+  const router = useRouter()
+  const { register } = useAuth()
+  
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
     password: "",
     height: "",
     weight: "",
+    dateOfBirth: "",
+    gender: "male",
     goal: "weight_loss",
     experience: "beginner",
     workoutType: "home",
@@ -43,16 +52,46 @@ export function OnboardingDialog() {
   const handleNext = () => {
     if (step < totalSteps) {
       setStep(step + 1)
-    } else {
-      // Handle form submission
-      console.log("Form submitted:", formData)
-      setOpen(false)
-    }
+    } 
   }
 
   const handleBack = () => {
     if (step > 1) {
       setStep(step - 1)
+    }
+  }
+  
+  const handleSubmit = async () => {
+    setIsLoading(true)
+    setErrorMessage("")
+    
+    try {
+      // Map form data to backend expected format
+      await register(
+        formData.name, 
+        formData.email, 
+        formData.password,
+        {
+          dateOfBirth: formData.dateOfBirth,
+          gender: formData.gender,
+          height: formData.height ? parseFloat(formData.height) : undefined,
+          weight: formData.weight ? parseFloat(formData.weight) : undefined,
+          fitnessGoal: formData.goal,
+          experienceLevel: formData.experience,
+          preferredWorkoutType: formData.workoutType,
+          activityLevel: formData.activityLevel,
+          medicalConditions: formData.medicalConditions,
+          dietaryRestrictions: formData.dietaryRestrictions
+        }
+      )
+      
+      setOpen(false)
+      router.push("/login")
+    } catch (err) {
+      console.error("Registration failed:", err)
+      setErrorMessage(err instanceof Error ? err.message : "Registration failed")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -79,6 +118,12 @@ export function OnboardingDialog() {
             />
           </div>
 
+          {errorMessage && (
+            <div className="p-3 mt-6 mb-4 bg-red-100 border border-red-400 text-red-700 rounded">
+              {errorMessage}
+            </div>
+          )}
+
           <div className="mt-6">
             {step === 1 && (
               <div className="space-y-4 pt-4">
@@ -89,6 +134,7 @@ export function OnboardingDialog() {
                     placeholder="Enter your full name"
                     value={formData.name}
                     onChange={(e) => updateFormData("name", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -99,6 +145,7 @@ export function OnboardingDialog() {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => updateFormData("email", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -109,7 +156,34 @@ export function OnboardingDialog() {
                     placeholder="Create a password"
                     value={formData.password}
                     onChange={(e) => updateFormData("password", e.target.value)}
+                    required
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                  <Input
+                    id="dateOfBirth"
+                    type="date"
+                    value={formData.dateOfBirth}
+                    onChange={(e) => updateFormData("dateOfBirth", e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Gender</Label>
+                  <Select 
+                    value={formData.gender} 
+                    onValueChange={(value) => updateFormData("gender", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             )}
@@ -124,6 +198,7 @@ export function OnboardingDialog() {
                     placeholder="Enter your height"
                     value={formData.height}
                     onChange={(e) => updateFormData("height", e.target.value)}
+                    required
                   />
                 </div>
                 <div className="space-y-2">
@@ -134,6 +209,7 @@ export function OnboardingDialog() {
                     placeholder="Enter your weight"
                     value={formData.weight}
                     onChange={(e) => updateFormData("weight", e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -216,10 +292,10 @@ export function OnboardingDialog() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="sedentary">Sedentary (Little to no exercise)</SelectItem>
-                      <SelectItem value="light">Light (1-3 days/week)</SelectItem>
-                      <SelectItem value="moderate">Moderate (3-5 days/week)</SelectItem>
-                      <SelectItem value="active">Very Active (6-7 days/week)</SelectItem>
-                      <SelectItem value="athletic">Athletic (2x training/day)</SelectItem>
+                      <SelectItem value="lightly_active">Light (1-3 days/week)</SelectItem>
+                      <SelectItem value="moderately_active">Moderate (3-5 days/week)</SelectItem>
+                      <SelectItem value="very_active">Very Active (6-7 days/week)</SelectItem>
+                      <SelectItem value="extremely_active">Athletic (2x training/day)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -249,21 +325,32 @@ export function OnboardingDialog() {
             <Button variant="outline" onClick={handleBack} disabled={step === 1} className="w-24">
               <ChevronLeft className="mr-2 h-4 w-4" /> Back
             </Button>
-            <Button onClick={handleNext} className="w-24 bg-red-500 hover:bg-red-600">
-              {step === totalSteps ? (
-                <>
-                  Done <Check className="ml-2 h-4 w-4" />
-                </>
-              ) : (
-                <>
-                  Next <ChevronRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
+            
+            {step === totalSteps ? (
+              <Button 
+                onClick={handleSubmit} 
+                className="w-24 bg-red-500 hover:bg-red-600"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Done <Check className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleNext} 
+                className="w-24 bg-red-500 hover:bg-red-600"
+              >
+                Next <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>
     </Dialog>
   )
 }
-
