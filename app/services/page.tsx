@@ -17,7 +17,7 @@ export default function Services() {
           <div 
             className="absolute inset-0 bg-black/40" // Dark overlay for better text visibility
             style={{
-              backgroundImage: "url('/images/fitness-service.jpg')",
+              backgroundImage: "url('/images/service-jpg.jpg')",
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
@@ -35,7 +35,7 @@ export default function Services() {
               Transform Your Fitness Journey with AI
             </motion.h1>
             <motion.p
-              className="text-xl text-black-500 font-semibold mb-8" // Changed from text-gray-300 to text-black and added font-semibold
+              className="text-xl text-white font-semibold mb-8" // Changed from text-gray-300 to text-black and added font-semibold
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}

@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { Dumbbell, Apple, LineChart, Settings, PanelLeft, LogOut } from "lucide-react"
+import { Dumbbell, Apple, LineChart, Settings, PanelLeft, LogOut, HomeIcon, Icon, ActivityIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/app/contexts/AuthContext"
 import ProtectedRoute from "@/components/ProtectedRoute"
@@ -30,7 +30,7 @@ export default function DashboardLayout({
   const routes = [
     {
       label: "Dashboard",
-      icon: Dumbbell,
+      icon: ActivityIcon,
       href: "/dashboard",
       color: "text-red-500",
     },
@@ -82,7 +82,7 @@ export default function DashboardLayout({
               {/* Logo */}
               <div className="flex h-14 items-center border-b border-gray-800 px-4">
                 <Link href="/" className="flex items-center gap-2">
-                  <Dumbbell className="h-6 w-6 text-red-500" />
+                  <HomeIcon className="h-6 w-6 text-white" />
                   <span
                     className={cn(
                       "text-lg font-bold text-white transition-opacity duration-300",

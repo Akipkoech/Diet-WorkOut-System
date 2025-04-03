@@ -117,16 +117,22 @@ export default function Contact() {
   const [showRedirectDialog, setShowRedirectDialog] = useState(false)
   
   // Form state
-  const [fullName, setFullName] = useState("")
-  const [email, setEmail] = useState("")
+  const [fullName, setFullName] = useState<string>("")
+  const [email, setEmail] = useState<string>("")
   const [category, setCategory] = useState("")
   const [message, setMessage] = useState("")
   
   // Set form fields if user is logged in
   useEffect(() => {
+    console.log("User:", user);
     if (user) {
-      setFullName(user.fullName)
-      setEmail(user.email)
+      // Check different possible properties for the user's name
+      const userFullName = user.fullName || user.name || user.displayName || "";
+      console.log("Full Name:", userFullName);
+      console.log("Email:", user?.email || "");
+      
+      setFullName(userFullName)
+      setEmail(user.email || "")
     }
   }, [user])
 
@@ -170,9 +176,6 @@ export default function Contact() {
       await supportTicketService.createTicket(ticketData)
       
       setIsLoading(false)
-      setIsSuccess(true)
-      
-      // Show success notification
       showTemporaryAlert(
         "✨ Support ticket created successfully! Our team will review your request and get back to you within 24 hours.",
         "success"
@@ -415,7 +418,7 @@ export default function Contact() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <MapPin className="h-6 w-6 text-red-500 mt-1" />
+                    <MapPin className="h-6 w-6 text-blue-500 mt-1" />
                     <div>
                       <h3 className="font-medium">Visit Us</h3>
                       <p className="text-gray-600">
@@ -425,7 +428,7 @@ export default function Contact() {
                     </div>
                   </div>
                   <div className="flex items-start space-x-4">
-                    <Phone className="h-6 w-6 text-red-500 mt-1" />
+                    <Phone className="h-6 w-6 text-green-500 mt-1" />
                     <div>
                       <h3 className="font-medium">Call Us</h3>
                       <p className="text-gray-600">+ (254) 567-8900</p>
@@ -459,11 +462,11 @@ export default function Contact() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex space-x-4">
-                    <Button variant="outline" size="icon" className="hover:text-red-500">
+                    <Button variant="outline" size="icon" className="hover:text-blue-500">
                       <Facebook className="h-5 w-5" />
                       <span className="sr-only">Facebook</span>
                     </Button>
-                    <Button variant="outline" size="icon" className="hover:text-red-500">
+                    <Button variant="outline" size="icon" className="hover:text-black-500">
                       <Twitter className="h-5 w-5" />
                       <span className="sr-only">Twitter</span>
                     </Button>

@@ -146,7 +146,7 @@ export default function WorkoutsPage() {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [completedExercises, setCompletedExercises] = useState<Record<string, number>>({});
   const [activePlan, setActivePlan] = useState<WorkoutPlan | null>(null);
-  const [calendarView, setCalendarView] = useState<CalendarView>('week');
+  const [calendarView, setCalendarView] = useState<CalendarView>("month"); // Default to "month"
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [highlightedDate, setHighlightedDate] = useState(new Date());
   const [showCreateWorkoutModal, setShowCreateWorkoutModal] = useState(false);
@@ -156,7 +156,7 @@ export default function WorkoutsPage() {
     let interval: NodeJS.Timeout;
     if (isTimerRunning && timer > 0) {
       interval = setInterval(() => {
-        setTimer(prevTimer => {
+        setTimer((prevTimer) => {
           if (prevTimer <= 1) {
             // Timer reached 0, stop and reset
             setIsTimerRunning(false);
@@ -474,7 +474,7 @@ export default function WorkoutsPage() {
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       ) : (
-        <Tabs defaultValue="schedule" className="space-y-6">
+        <Tabs defaultValue="workout" className="space-y-6">
           <TabsList>
             <TabsTrigger value="schedule">Schedule</TabsTrigger>
             <TabsTrigger value="workout">Today's Workout</TabsTrigger>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -14,6 +14,10 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated, logout, user } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Check if the current route is "/dashboard"
+  const isDashboard = pathname?.startsWith("/dashboard");
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -28,6 +32,11 @@ export default function Navbar() {
       console.error("Logout failed:", error);
     }
   };
+
+  // Do not render the Navbar if the user is on the dashboard
+  if (isDashboard) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-gray-900 text-white">
