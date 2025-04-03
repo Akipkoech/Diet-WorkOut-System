@@ -1,7 +1,6 @@
-// services/progressTrackingApi.ts
 export interface ProgressTrackingData {
   id?: string | number;
-  userId: string | number;
+  userId: number; // Changed from `string | number` to `number`
   date: string;
   weight?: number | null;
   bodyFatPercentage?: number | null;
@@ -18,7 +17,13 @@ export const fetchProgressTracking = async (userId: string): Promise<ProgressTra
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`${API_URL}/api/progress/user/${userId}?limit=30`, {
+    // Convert userId to a number before making the request
+    const numericUserId = parseInt(userId);
+    if (isNaN(numericUserId)) {
+      throw new Error("Invalid userId: must be a valid number");
+    }
+
+    const response = await fetch(`${API_URL}/api/progress/user/${numericUserId}?limit=30`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -44,13 +49,19 @@ export const createProgressRecord = async (progressData: ProgressTrackingData): 
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const token = localStorage.getItem("token");
 
+    // Ensure userId is a number
+    const numericUserId = Number(progressData.userId);
+    if (isNaN(numericUserId)) {
+      throw new Error("Invalid userId: must be a valid number");
+    }
+
     const response = await fetch(`${API_URL}/api/progress`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(progressData),
+      body: JSON.stringify({ ...progressData, userId: numericUserId }),
     });
 
     if (!response.ok) {
@@ -75,13 +86,19 @@ export const updateProgressRecord = async (
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const token = localStorage.getItem("token");
 
+    // Ensure userId is a number
+    const numericUserId = Number(progressData.userId);
+    if (isNaN(numericUserId)) {
+      throw new Error("Invalid userId: must be a valid number");
+    }
+
     const response = await fetch(`${API_URL}/api/progress/${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(progressData),
+      body: JSON.stringify({ ...progressData, userId: numericUserId }),
     });
 
     if (!response.ok) {
